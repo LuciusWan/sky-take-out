@@ -51,17 +51,18 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
                 .select()
+                //扫描的包
                 .apis(RequestHandlerSelectors.basePackage("com.sky.controller"))
                 .paths(PathSelectors.any())
                 .build();
         return docket;
     }
-
     /**
      * 设置静态资源映射
      * @param registry
      */
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        //打开网址http://localhost:8080/doc.html就可以对接口进行测试
         registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
