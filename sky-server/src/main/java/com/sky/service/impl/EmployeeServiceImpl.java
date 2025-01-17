@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -79,6 +80,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         //直接传给mapper层进行添加员工
         employeeMapper.insertEmployee(employee);
         return employee;
+    }
+
+    @Override
+    public ArrayList<Employee> select(Integer pageNum, Integer pageSize) {
+        ArrayList<Employee> employees = new ArrayList<>();
+        employees=employeeMapper.getEmployee(pageNum,pageSize);
+        return employees;
     }
 
 }
