@@ -18,7 +18,8 @@ public interface EmployeeService {
     Employee login(EmployeeLoginDTO employeeLoginDTO);
     Employee Insert(EmployeeDTO employeeDTO);
 
-    ArrayList<Employee> select(Integer pageNum, Integer pageSize);
 
     PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
+
+    void startOrStop(Integer status, Long id);
 }

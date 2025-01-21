@@ -92,13 +92,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public ArrayList<Employee> select(Integer pageNum, Integer pageSize) {
-        ArrayList<Employee> employees = new ArrayList<>();
-        employees=employeeMapper.getEmployee(pageNum,pageSize);
-        return employees;
-    }
-
-    @Override
     public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
         PageResult pageResult = new PageResult();
         PageHelper.startPage(employeePageQueryDTO.getPage(),employeePageQueryDTO.getPageSize());
@@ -108,6 +101,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         pageResult.setTotal(page.getTotal());
         pageResult.setRecords(page.getResult());
         return pageResult;
+    }
+
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        Employee employee= new Employee();
+        employee.setId(id);
+        employee.setStatus(status);
+        employeeMapper.startOrStop(employee);
     }
 
 }
