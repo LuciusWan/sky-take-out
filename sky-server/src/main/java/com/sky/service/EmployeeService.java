@@ -2,7 +2,9 @@ package com.sky.service;
 
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
+import com.sky.result.PageResult;
 
 import java.util.ArrayList;
 
@@ -17,4 +19,6 @@ public interface EmployeeService {
     Employee Insert(EmployeeDTO employeeDTO);
 
     ArrayList<Employee> select(Integer pageNum, Integer pageSize);
+
+    PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
 }

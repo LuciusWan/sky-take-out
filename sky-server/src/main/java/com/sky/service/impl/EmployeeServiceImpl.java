@@ -1,16 +1,22 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,12 +24,15 @@ import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-
+import java.util.Properties;
+@Slf4j
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeMapper employeeMapper;
+    @Autowired
+    private Properties pageHelperProperties;
 
     /**
      * 员工登录
@@ -74,9 +83,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateTime(LocalDateTime.now());
         //创建默认密码，并且对密码进行md5加密输入
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
-        //TODO设置创建人
-        employee.setCreateUser(10L);
-        employee.setUpdateUser(10L);
+        employee.setCreateUser(BaseContext.getCurrentId());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        log.info("id为{}的员工创建了用户名为{}的员工用户", BaseContext.getCurrentId(), employee.getName());
         //直接传给mapper层进行添加员工
         employeeMapper.insertEmployee(employee);
         return employee;
@@ -87,6 +96,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         ArrayList<Employee> employees = new ArrayList<>();
         employees=employeeMapper.getEmployee(pageNum,pageSize);
         return employees;
+    }
+
+    @Override
+    public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        PageResult pageResult = new PageResult();
+        PageHelper.startPage(employeePageQueryDTO.getPage(),employeePageQueryDTO.getPageSize());
+        //按照PageHelper的要求，用Page<Employee>接收需要返回的参数
+        //进入mapper层后通过动态SQL语句实现模糊查询和分页查询，返回结果为总内容数和数据内容
+        Page<Employee> page=employeeMapper.pageQuery(employeePageQueryDTO);
+        pageResult.setTotal(page.getTotal());
+        pageResult.setRecords(page.getResult());
+        return pageResult;
     }
 
 }
