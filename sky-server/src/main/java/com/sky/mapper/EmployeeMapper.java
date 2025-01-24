@@ -1,14 +1,11 @@
 package com.sky.mapper;
 
 import com.github.pagehelper.Page;
-import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-
-import java.util.ArrayList;
 
 @Mapper
 public interface EmployeeMapper {
@@ -24,5 +21,7 @@ public interface EmployeeMapper {
     void insertEmployee(Employee employee);
     Page<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
 
-    void startOrStop(Employee employee);
+    void update(Employee employee);
+    @Select("select * from employee where id=#{id}")
+    Employee select(Integer id);
 }

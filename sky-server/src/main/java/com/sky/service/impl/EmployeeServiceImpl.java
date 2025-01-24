@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Properties;
 @Slf4j
 @Service
@@ -108,7 +107,24 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee= new Employee();
         employee.setId(id);
         employee.setStatus(status);
-        employeeMapper.startOrStop(employee);
+        employeeMapper.update(employee);
+    }
+
+    @Override
+    public EmployeeDTO select(Integer id) {
+        Employee employee= employeeMapper.select(id);
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+        BeanUtils.copyProperties(employee, employeeDTO);
+        return employeeDTO;
+    }
+
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        employeeMapper.update(employee);
     }
 
 }

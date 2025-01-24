@@ -94,4 +94,16 @@ public class EmployeeController {
         employeeService.startOrStop(status,id);
         return Result.success();
     }
+    @ApiOperation("修改员工第一步")
+    @GetMapping("/{id}")
+    public Result<EmployeeDTO> selectById(@PathVariable Integer id) {
+        EmployeeDTO employeeDTO=employeeService.select(id);
+        return Result.success(employeeDTO);
+    }
+    @ApiOperation("修改员工第二步")
+    @PutMapping()
+    public Result update(@RequestBody EmployeeDTO employeeDTO) {
+        employeeService.update(employeeDTO);
+        return Result.success();
+    }
 }
