@@ -78,12 +78,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         //设置默认状态，StatusConstant.ENABLE是工具类中的常量
         employee.setStatus(StatusConstant.ENABLE);
         //设置修改时间和创建时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+        /*employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());*/
         //创建默认密码，并且对密码进行md5加密输入
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
-        employee.setCreateUser(BaseContext.getCurrentId());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+        /*employee.setCreateUser(BaseContext.getCurrentId());
+        employee.setUpdateUser(BaseContext.getCurrentId());*/
         log.info("id为{}的员工创建了用户名为{}的员工用户", BaseContext.getCurrentId(), employee.getName());
         //直接传给mapper层进行添加员工
         employeeMapper.insertEmployee(employee);
@@ -122,8 +122,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void update(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+        /*employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());*/
         employeeMapper.update(employee);
     }
 
