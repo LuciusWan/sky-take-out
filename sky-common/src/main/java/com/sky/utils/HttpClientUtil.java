@@ -33,6 +33,7 @@ public class HttpClientUtil {
      * @param paramMap
      * @return
      */
+    
     public static String doGet(String url,Map<String,String> paramMap){
         // 创建Httpclient对象
         CloseableHttpClient httpClient = HttpClients.createDefault();
