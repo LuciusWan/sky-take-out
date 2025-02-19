@@ -58,4 +58,11 @@ public class DishController {
         dishService.update(dishDTO);
         return Result.success();
     }
+    @ApiOperation("根据分类查询菜品")
+    @GetMapping("/list")
+    public Result<List<Dish>> getDishList(Long categoryId) {
+        log.info("根据分类查询菜品{}",categoryId);
+        List<Dish> list= dishService.selectByCategoryId(categoryId);
+        return Result.success(list);
+    }
 }
