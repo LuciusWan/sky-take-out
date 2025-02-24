@@ -20,7 +20,7 @@ public class RedisConfiguration {
         //设置redis key序列化器
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         // 设置值的序列化器
-        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        //redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 
         // 设置哈希键和哈希值的序列化器
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
