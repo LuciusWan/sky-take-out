@@ -1,14 +1,12 @@
 package com.sky.mapper;
 
-import com.sky.dto.ShoppingCartDTO;
-import com.sky.entity.SetmealDish;
 import com.sky.entity.ShoppingCart;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 @Mapper
-public interface ShoppingCartMapping {
+public interface ShoppingCartMapper {
     List<ShoppingCart> select(ShoppingCart shoppingCart);
     @Update("update shopping_cart set number=#{number} where id=#{id}")
     void update(ShoppingCart shoppingCart);
