@@ -2,11 +2,10 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.github.xiaoymin.knife4j.core.util.CollectionUtils;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
-import com.sky.dto.OrdersDTO;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersSubmitDTO;
+import com.sky.dto.*;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
@@ -20,6 +19,7 @@ import com.sky.mapper.ShoppingCartMapper;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.vo.DishVO;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -27,11 +27,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
 
@@ -61,8 +64,22 @@ public class OrderServiceImpl implements OrderService {
         }
         Orders orders=new Orders();
         BeanUtils.copyProperties(ordersSubmitDTO,orders);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime estimatedDeliveryTime = orders.getEstimatedDeliveryTime();
+
+        // 计算时间差
+        Duration duration = Duration.between(now, estimatedDeliveryTime);
+        System.out.println(duration);
+        System.out.println(now);
+        System.out.println(estimatedDeliveryTime);
+        // 检查时间差是否正好是一小时
+        if (duration.toHours() <= 1.1) {
+            orders.setDeliveryStatus(1);
+        } else {
+            orders.setDeliveryStatus(0);
+        }
         orders.setOrderTime(LocalDateTime.now());
-        orders.setStatus(Orders.PENDING_PAYMENT);
+        orders.setStatus(Orders.TO_BE_CONFIRMED);
         orders.setPayStatus(Orders.UN_PAID);
         orders.setNumber(String.valueOf(System.currentTimeMillis()));
         orders.setPhone(addressBook.getPhone());
@@ -178,7 +195,149 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void repetition(Long id) {
+        //先查询有没有以前这个订单，没有就抛出异常
         Orders orders= orderMapper.checkOrder(id);
+        if(orders==null){
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        //查询到后使用BeanUtils进行内容拷贝，内容进行正确设置
+        if(orders.getDeliveryStatus()==0){
+            throw new OrderBusinessException(MessageConstant.PREVIOUS_ORDER_NOT_ALLOW_TIMED_DELIVERY);
+        }
+        orders.setOrderTime(LocalDateTime.now());
+        orders.setCancelReason(null);
+        orders.setNumber(String.valueOf(System.currentTimeMillis()));
+        orders.setCancelTime(null);
+        orders.setStatus(1);
+        orders.setCheckoutTime(null);
+        orders.setRejectionReason(null);
+        orders.setEstimatedDeliveryTime(LocalDateTime.now().plusHours(1));
+        orders.setDeliveryStatus(1);
+        //下单
+        orderMapper.insert(orders);
+        //查到订单后查询对应的订单详情list
+        List<OrderDetail> list =orderDetailMapper.selectById(id);
+        for (OrderDetail orderDetail : list) {
+            orderDetail.setOrderId(orders.getId());
+        }
+        System.out.println(list);
+        //新增一遍订单详情
+        orderDetailMapper.insert(list);
+    }
+
+    /**
+     * 订单搜索
+     *
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    public PageResult adminCheckOrder(OrdersPageQueryDTO ordersPageQueryDTO) {
+        PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+
+        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+
+        // 部分订单状态，需要额外返回订单菜品信息，将Orders转化为OrderVO
+        List<OrderVO> orderVOList = getOrderVOList(page);
+
+        return new PageResult(page.getTotal(), orderVOList);
+    }
+
+    @Override
+    public void adminConfirm(OrdersConfirmDTO ordersConfirmDTO) {
+        Orders orders = orderMapper.checkOrder(ordersConfirmDTO.getId());
+        orders.setStatus(orders.CONFIRMED);
+        orderMapper.update(orders);
+    }
+
+    @Override
+    public void adminRejection(OrdersRejectionDTO ordersRejectionDTO) {
+        Orders orders = orderMapper.checkOrder(ordersRejectionDTO.getId());
+        orders.setStatus(Orders.CANCELLED);
+        orders.setCancelTime(LocalDateTime.now());
+        orders.setRejectionReason(ordersRejectionDTO.getRejectionReason());
+        orderMapper.update(orders);
+    }
+
+    @Override
+    public void adminCancel(OrdersCancelDTO ordersCancelDTO) {
+        Orders orders = orderMapper.checkOrder(ordersCancelDTO.getId());
+        orders.setStatus(Orders.CANCELLED);
+        orders.setCancelTime(LocalDateTime.now());
+        orders.setCancelReason(ordersCancelDTO.getCancelReason());
+        orderMapper.update(orders);
+    }
+
+    @Override
+    public OrderStatisticsVO checkStatistics() {
+        OrderStatisticsVO orderStatisticsVO = new OrderStatisticsVO();
+        orderStatisticsVO.setConfirmed(orderMapper.checkConfirms());
+        orderStatisticsVO.setDeliveryInProgress(orderMapper.checkDeliveryInProgress());
+        orderStatisticsVO.setToBeConfirmed(orderMapper.checkToBeConfirmed());
+        return null;
+    }
+
+    @Override
+    public void adminDelivery(Long id) {
+        Orders orders = orderMapper.checkOrder(id);
+        orders.setStatus(Orders.DELIVERY_IN_PROGRESS);
+        orderMapper.update(orders);
+    }
+
+    @Override
+    public void adminComplete(Long id) {
+        Orders orders = orderMapper.checkOrder(id);
+        orders.setStatus(Orders.COMPLETED);
+        orders.setDeliveryTime(LocalDateTime.now());
+        orderMapper.update(orders);
+    }
+
+    private List<OrderVO> getOrderVOList(Page<Orders> page) {
+        // 需要返回订单菜品信息，自定义OrderVO响应结果
+        List<OrderVO> orderVOList = new ArrayList<>();
+
+        List<Orders> ordersList = page.getResult();
+        if (!CollectionUtils.isEmpty(ordersList)) {
+            for (Orders orders : ordersList) {
+                // 将共同字段复制到OrderVO
+                AddressBook addressBook=addressBookMapper.selectById(orders.getAddressBookId());
+                StringBuilder stringBuilder=new StringBuilder();
+                stringBuilder.append(addressBook.getProvinceName());
+                stringBuilder.append(addressBook.getCityName());
+                stringBuilder.append(addressBook.getDistrictName());
+                stringBuilder.append(addressBook.getDetail());
+                String address=stringBuilder.toString();
+                orders.setAddress(address);
+                OrderVO orderVO = new OrderVO();
+                BeanUtils.copyProperties(orders, orderVO);
+                String orderDishes = getOrderDishesStr(orders);
+
+                // 将订单菜品信息封装到orderVO中，并添加到orderVOList
+                orderVO.setOrderDishes(orderDishes);
+                orderVOList.add(orderVO);
+            }
+        }
+        return orderVOList;
+    }
+
+    /**
+     * 根据订单id获取菜品信息字符串
+     *
+     * @param orders
+     * @return
+     */
+    private String getOrderDishesStr(Orders orders) {
+        // 查询订单菜品详情信息（订单中的菜品和数量）
+        List<OrderDetail> orderDetailList = orderDetailMapper.selectById(orders.getId());
+
+        // 将每一条订单菜品信息拼接为字符串（格式：宫保鸡丁*3；）
+        List<String> orderDishList = orderDetailList.stream().map(x -> {
+            String orderDish = x.getName() + "*" + x.getNumber() + ";";
+            return orderDish;
+        }).collect(Collectors.toList());
+
+        // 将该订单对应的所有菜品信息拼接在一起
+        return String.join("", orderDishList);
     }
 }

@@ -15,6 +15,14 @@ public interface OrderMapper {
     Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
     @Select("select * from orders where id=#{id}")
     Orders checkOrder(Long id);
-    @Update("update orders set status=#{status},cancel_reason=#{cancelReason},cancel_time=#{cancelTime}")
+    @Update("update orders set status=#{status},cancel_reason=#{cancelReason},cancel_time=#{cancelTime} where id=#{id}")
     void update(Orders orders);
+    @Select("select count(*) from orders where status=3")
+    Integer checkConfirms();
+    @Select("select count(*) from orders where status=4")
+    Integer checkDeliveryInProgress();
+    @Select("select count(*) from orders where status=2")
+    Integer checkToBeConfirmed();
+
+    void delivery(Long id);
 }

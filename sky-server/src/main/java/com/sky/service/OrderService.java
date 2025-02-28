@@ -1,8 +1,8 @@
 package com.sky.service;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersSubmitDTO;
+import com.sky.dto.*;
 import com.sky.entity.Orders;
 import com.sky.result.PageResult;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 
@@ -18,4 +18,18 @@ public interface OrderService {
     void cancel(Long id);
 
     void repetition(Long id);
+
+    PageResult adminCheckOrder(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    void adminConfirm(OrdersConfirmDTO ordersConfirmDTO);
+
+    void adminRejection(OrdersRejectionDTO ordersRejectionDTO);
+
+    void adminCancel(OrdersCancelDTO ordersCancelDTO);
+
+    OrderStatisticsVO checkStatistics();
+
+    void adminDelivery(Long id);
+
+    void adminComplete(Long id);
 }
