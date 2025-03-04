@@ -68,7 +68,7 @@ public class OrderController {
     @ApiOperation("订单支付")
     public Result payment(@RequestBody OrdersPaymentDTO ordersPaymentDTO) throws Exception {
         log.info("订单支付：{}", ordersPaymentDTO);
-        orderService.payment();
+        orderService.payment(ordersPaymentDTO);
         return Result.success();
     }
 }

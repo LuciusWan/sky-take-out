@@ -3,6 +3,7 @@ package com.sky.service.impl;
 import com.sky.context.BaseContext;
 import com.sky.entity.AddressBook;
 import com.sky.mapper.AddressBookMapper;
+import com.sky.mapper.OrderMapper;
 import com.sky.service.AddressBookService;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import java.util.List;
 public class AddressBookServiceImpl implements AddressBookService {
     @Autowired
     private AddressBookMapper addressBookMapper;
+    @Autowired
+    private OrderMapper orderMapper;
     @Override
     public List<AddressBook> selectAll(AddressBook addressBook) {
         List<AddressBook> list =addressBookMapper.selectAll(addressBook);
@@ -41,8 +44,10 @@ public class AddressBookServiceImpl implements AddressBookService {
     public void update(AddressBook addressBook) {
         addressBook.setUserId(BaseContext.getCurrentId());
         addressBook.setIsDefault(0);
-        addressBookMapper.delete(addressBook.getId());
-        addressBookMapper.add(addressBook);
+        /*addressBookMapper.delete(addressBook.getId());
+        addressBookMapper.add(addressBook);*/
+        orderMapper.updateConsignee(addressBook.getConsignee(), addressBook.getId(),addressBook.getPhone());
+        addressBookMapper.updateAll(addressBook);
     }
 
     @Override

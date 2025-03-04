@@ -34,5 +34,5 @@ public interface OrderService {
 
     void adminComplete(Long id);
 
-    void payment();
+    void payment(OrdersPaymentDTO ordersPaymentDTO);
 }

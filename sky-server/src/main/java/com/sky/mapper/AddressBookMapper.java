@@ -21,4 +21,6 @@ public interface AddressBookMapper {
     void beDefault(AddressBook addressBook);
     @Update("update address_book set is_default=0 where user_id=#{userId}")
     void updateIsDefaultByUserId(AddressBook addressBook);
+
+    void updateAll(AddressBook addressBook);
 }

@@ -249,6 +249,7 @@ public class OrderServiceImpl implements OrderService {
         Orders orders = orderMapper.checkOrder(ordersRejectionDTO.getId());
         orders.setStatus(Orders.CANCELLED);
         orders.setCancelTime(LocalDateTime.now());
+        orders.setCancelReason(ordersRejectionDTO.getRejectionReason());
         orders.setRejectionReason(ordersRejectionDTO.getRejectionReason());
         orderMapper.update(orders);
     }
@@ -294,6 +295,7 @@ public class OrderServiceImpl implements OrderService {
         if (!CollectionUtils.isEmpty(ordersList)) {
             for (Orders orders : ordersList) {
                 // 将共同字段复制到OrderVO
+                System.out.println(orders.getAddressBookId());
                 AddressBook addressBook=addressBookMapper.selectById(orders.getAddressBookId());
                 StringBuilder stringBuilder=new StringBuilder();
                 stringBuilder.append(addressBook.getProvinceName());
@@ -334,11 +336,14 @@ public class OrderServiceImpl implements OrderService {
         return String.join("", orderDishList);
     }
 
-    public void payment(){
+    public void payment(OrdersPaymentDTO ordersPaymentDTO){
         // 当前登录用户id
         Long userId = BaseContext.getCurrentId();
-        Orders order = orderMapper.checkOrderByUserId(userId);
-        order.setStatus(2);
+        String number=ordersPaymentDTO.getOrderNumber();
+        Orders order = orderMapper.checkOrderByUserId(userId,number);
+        order.setStatus(Orders.TO_BE_CONFIRMED);
+        order.setPayStatus(Orders.PAID);
+        order.setCheckoutTime(LocalDateTime.now());
         orderMapper.update(order);
     }
 }

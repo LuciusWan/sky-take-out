@@ -18,7 +18,7 @@ public interface OrderMapper {
     Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
     @Select("select * from orders where id=#{id}")
     Orders checkOrder(Long id);
-    @Update("update orders set status=#{status},cancel_reason=#{cancelReason},cancel_time=#{cancelTime} where id=#{id}")
+    //@Update("update orders set status=#{status},cancel_reason=#{cancelReason},cancel_time=#{cancelTime} where id=#{id}")
     void update(Orders orders);
     @Select("select count(*) from orders where status=3")
     Integer checkConfirms();
@@ -30,6 +30,8 @@ public interface OrderMapper {
     List<Orders> selectOverTime(LocalDateTime localDateTime);
     @Select("select * from orders where status=4")
     List<Orders> selectUnCompleteOrder(LocalDateTime now);
-    @Select("select * from orders where user_id=#{userId} and status=1")
-    Orders checkOrderByUserId(Long userId);
+    @Select("select * from orders where user_id=#{userId} and status=1 and number=#{number}")
+    Orders checkOrderByUserId(Long userId,String number);
+    @Update("update orders set consignee=#{consignee},phone=#{phone} where address_book_id=#{addressBookId}")
+    void updateConsignee(String consignee,Long addressBookId,String phone);
 }
