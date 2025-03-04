@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.core.util.CollectionUtils;
@@ -13,6 +14,7 @@ import com.sky.mapper.*;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.vo.*;
+import com.sky.websocket.WebSocketServer;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,9 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
@@ -41,6 +45,8 @@ public class OrderServiceImpl implements OrderService {
     private AddressBookMapper addressBookMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private WebSocketServer webSocketServer;
     @Override
     public OrderSubmitVO submit(OrdersSubmitDTO ordersSubmitDTO) {
         //异常处理
@@ -345,5 +351,22 @@ public class OrderServiceImpl implements OrderService {
         order.setPayStatus(Orders.PAID);
         order.setCheckoutTime(LocalDateTime.now());
         orderMapper.update(order);
+        Map map=new HashMap();
+        //type是1的时候是来单提醒
+        map.put("type",1);
+        map.put("orderId",order.getId());
+        map.put("content","订单号"+order.getNumber());
+        String json= JSON.toJSONString(map);
+        webSocketServer.sendToAllClient(json);
+    }
+
+    @Override
+    public void reminder(Long id) {
+        Map map=new HashMap<>();
+        map.put("type",2);
+        map.put("orderId",id);
+        map.put("content","id为"+id+"的用户催单了");
+        String json= JSON.toJSONString(map);
+        webSocketServer.sendToAllClient(json);
     }
 }

@@ -1,6 +1,4 @@
 package com.sky.config;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sky.interceptor.JwtTokenAdminInterceptor;
 import com.sky.interceptor.JwtTokenUserInterceptor;
 import com.sky.json.JacksonObjectMapper;
