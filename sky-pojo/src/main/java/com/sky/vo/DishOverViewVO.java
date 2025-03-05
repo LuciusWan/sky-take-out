@@ -17,7 +17,7 @@ public class DishOverViewVO implements Serializable {
 
     // 已停售数量
     private Integer discontinued;
-
+    private static final long serialVersionUID = 1L;
     public DishOverViewVO() {
     }
 

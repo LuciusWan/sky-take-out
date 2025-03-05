@@ -13,7 +13,7 @@ public class UserLoginVO implements Serializable {
     private Long id;
     private String openid;
     private String token;
-
+    private static final long serialVersionUID = 1L;
     public UserLoginVO() {
     }
 

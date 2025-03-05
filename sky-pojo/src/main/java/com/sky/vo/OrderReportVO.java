@@ -27,7 +27,7 @@ public class OrderReportVO implements Serializable {
 
     //订单完成率
     private Double orderCompletionRate;
-
+    private static final long serialVersionUID = 1L;
     public OrderReportVO() {
     }
 

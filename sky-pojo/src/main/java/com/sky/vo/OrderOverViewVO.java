@@ -26,7 +26,7 @@ public class OrderOverViewVO implements Serializable {
 
     //全部订单
     private Integer allOrders;
-
+    private static final long serialVersionUID = 1L;
     public OrderOverViewVO() {
     }
 

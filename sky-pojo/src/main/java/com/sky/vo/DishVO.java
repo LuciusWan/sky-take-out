@@ -33,7 +33,7 @@ public class DishVO implements Serializable {
     private String categoryName;
     //菜品关联的口味
     private List<DishFlavor> flavors = new ArrayList<>();
-
+    private static final long serialVersionUID = 1L;
     public DishVO() {
     }
 

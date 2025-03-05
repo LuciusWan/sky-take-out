@@ -18,7 +18,7 @@ public class UserReportVO implements Serializable {
 
     //新增用户，以逗号分隔，例如：20,21,10
     private String newUserList;
-
+    private static final long serialVersionUID = 1L;
     public UserReportVO() {
     }
 

@@ -21,7 +21,7 @@ public class DishItemVO implements Serializable {
 
     //菜品描述
     private String description;
-
+    private static final long serialVersionUID = 1L;
     public DishItemVO() {
     }
 

@@ -19,7 +19,7 @@ public class OrderSubmitVO implements Serializable {
     private BigDecimal orderAmount;
     //下单时间
     private LocalDateTime orderTime;
-
+    private static final long serialVersionUID = 1L;
     public OrderSubmitVO() {
     }
 

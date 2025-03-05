@@ -34,4 +34,6 @@ public interface OrderMapper {
     Orders checkOrderByUserId(Long userId,String number);
     @Update("update orders set consignee=#{consignee},phone=#{phone} where address_book_id=#{addressBookId}")
     void updateConsignee(String consignee,Long addressBookId,String phone);
+    @Select("select sum(amount) from orders where order_time>=#{beginTime} and order_time<=#{endTime} and status=5")
+    Double turnover(LocalDateTime beginTime, LocalDateTime endTime);
 }

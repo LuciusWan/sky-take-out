@@ -13,7 +13,7 @@ public class OrderStatisticsVO implements Serializable {
 
     //派送中数量
     private Integer deliveryInProgress;
-
+    private static final long serialVersionUID = 1L;
     public OrderStatisticsVO() {
     }
 
