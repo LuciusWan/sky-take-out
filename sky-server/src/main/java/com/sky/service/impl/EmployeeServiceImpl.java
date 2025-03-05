@@ -84,7 +84,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
         /*employee.setCreateUser(BaseContext.getCurrentId());
         employee.setUpdateUser(BaseContext.getCurrentId());*/
-        log.info("id为{}的员工创建了用户名为{}的员工用户", BaseContext.getCurrentId(), employee.getName());
+        //log.info("id为{}的员工创建了用户名为{}的员工用户", BaseContext.getCurrentId(), employee.getName());
         //直接传给mapper层进行添加员工
         employeeMapper.insertEmployee(employee);
         return employee;

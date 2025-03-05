@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class SalesTop10ReportVO implements Serializable {
 
     //商品名称列表，以逗号分隔，例如：鱼香肉丝,宫保鸡丁,水煮鱼
@@ -19,4 +16,47 @@ public class SalesTop10ReportVO implements Serializable {
     //销量列表，以逗号分隔，例如：260,215,200
     private String numberList;
 
+    public SalesTop10ReportVO() {
+    }
+
+    public SalesTop10ReportVO(String nameList, String numberList) {
+        this.nameList = nameList;
+        this.numberList = numberList;
+    }
+
+    /**
+     * 获取
+     * @return nameList
+     */
+    public String getNameList() {
+        return nameList;
+    }
+
+    /**
+     * 设置
+     * @param nameList
+     */
+    public void setNameList(String nameList) {
+        this.nameList = nameList;
+    }
+
+    /**
+     * 获取
+     * @return numberList
+     */
+    public String getNumberList() {
+        return numberList;
+    }
+
+    /**
+     * 设置
+     * @param numberList
+     */
+    public void setNumberList(String numberList) {
+        this.numberList = numberList;
+    }
+
+    public String toString() {
+        return "SalesTop10ReportVO{nameList = " + nameList + ", numberList = " + numberList + "}";
+    }
 }

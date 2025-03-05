@@ -31,7 +31,7 @@ public class DishController {
     @PostMapping
     @ApiOperation("菜品添加")
     public Result addDish(@RequestBody DishDTO dishDTO) {
-        log.info("新增菜品{}", dishDTO);
+        //log.info("新增菜品{}", dishDTO);
         dishService.addDishAndFlavors(dishDTO);
         //清除缓存
         String key= "dish_"+dishDTO.getCategoryId();
@@ -41,16 +41,16 @@ public class DishController {
     @GetMapping("/page")
     @ApiOperation("分页查询菜品")
     public Result<PageResult> getDishPage(DishPageQueryDTO dishPageQueryDTO) {
-        log.info("分页查询菜品{}", dishPageQueryDTO);
+        //log.info("分页查询菜品{}", dishPageQueryDTO);
         PageResult pageResult=dishService.select(dishPageQueryDTO);
-        log.info("分页查询结果{}", pageResult);
+        //log.info("分页查询结果{}", pageResult);
         return Result.success(pageResult);
     }
     @DeleteMapping
     @ApiOperation("删除菜品接口")
     //前端传来的数据是1,2,3...如果要用集合去接受就要用到springboot框架的帮助，使用注解@RequestParam
     public Result deleteDish(@RequestParam List<Long> ids) {
-        log.info("菜品批量删除{}",ids);
+        //log.info("菜品批量删除{}",ids);
         dishService.delete(ids);
         //直接清除所有缓存数据,"dish_*" *是通配符，用keys这个集合去接受所有数据，然后直接全部删除
         cleanCache("dish_*");
@@ -73,13 +73,13 @@ public class DishController {
     @ApiOperation("根据分类查询菜品")
     @GetMapping("/list")
     public Result<List<Dish>> getDishList(Long categoryId) {
-        log.info("根据分类查询菜品{}",categoryId);
+        //log.info("根据分类查询菜品{}",categoryId);
         List<Dish> list= dishService.selectByCategoryId(categoryId);
         return Result.success(list);
     }
     @PostMapping("status/{status}")
     public Result updateStatus(@PathVariable  Integer status ,Long id){
-        log.info("修改菜品状态");
+        //log.info("修改菜品状态");
         dishService.changeStatus(status,id);
         cleanCache("dish_*");
         return Result.success();

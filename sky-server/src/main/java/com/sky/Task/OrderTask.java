@@ -27,7 +27,7 @@ public class OrderTask {
             order.setCancelTime(LocalDateTime.now());
             order.setCancelReason(MessageConstant.LONG_TIME_NO_PAYMENT);
             orderMapper.update(order);
-            log.info("订单号为{}的订单因为支付超时被取消订单",order.getId());
+            //log.info("订单号为{}的订单因为支付超时被取消订单",order.getId());
         }
     }
     @Scheduled(cron = "0 0 1 * * ?")
@@ -37,7 +37,7 @@ public class OrderTask {
             order.setStatus(5);
             order.setDeliveryTime(LocalDateTime.now());
             orderMapper.update(order);
-            log.info("订单号为{}的订单完成配送",order.getId());
+            //log.info("订单号为{}的订单完成配送",order.getId());
         }
     }
 }

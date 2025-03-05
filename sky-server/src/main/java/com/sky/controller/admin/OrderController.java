@@ -29,35 +29,35 @@ public class OrderController {
     @GetMapping("/conditionSearch")
     @ApiOperation("订单搜索")
     public Result<PageResult> adminCheckOrder(OrdersPageQueryDTO ordersPageQueryDTO) {
-        log.info("管理端查询订单");
+        //log.info("管理端查询订单");
         PageResult page= orderService.adminCheckOrder(ordersPageQueryDTO);
         return Result.success(page);
     }
     @GetMapping("/details/{id}")
     @ApiOperation("查询订单详情")
     public Result<OrderVO> adminCheckOrder(@PathVariable Long id) {
-        log.info("查询订单详情");
+        //log.info("查询订单详情");
         OrderVO orderVO=orderService.checkOrder(id);
         return Result.success(orderVO);
     }
     @PutMapping("/confirm")
     @ApiOperation("接单")
     public Result adminConfirm(@RequestBody OrdersConfirmDTO ordersConfirmDTO) {
-        log.info("接单");
+        //log.info("接单");
         orderService.adminConfirm(ordersConfirmDTO);
         return Result.success();
     }
     @PutMapping("/rejection")
     @ApiOperation("拒单")
     public Result adminRejection(@RequestBody OrdersRejectionDTO ordersRejectionDTO) {
-        log.info("拒单");
+        //log.info("拒单");
         orderService.adminRejection(ordersRejectionDTO);
         return Result.success();
     }
     @PutMapping("/cancel")
     @ApiOperation("取消订单")
     public Result adminCancel(@RequestBody OrdersCancelDTO ordersCancelDTO) {
-        log.info("取消订单");
+        //log.info("取消订单");
         orderService.adminCancel(ordersCancelDTO);
         return Result.success();
     }
@@ -70,14 +70,14 @@ public class OrderController {
     @PutMapping("/delivery/{id}")
     @ApiOperation("派送订单")
     public Result adminCancel(@PathVariable Long id) {
-        log.info("派送订单");
+        //log.info("派送订单");
         orderService.adminDelivery(id);
         return Result.success();
     }
     @PutMapping("/complete/{id}")
     @ApiOperation("完成订单")
     public Result adminComplete(@PathVariable Long id) {
-        log.info("完成订单");
+        //log.info("完成订单");
         orderService.adminComplete(id);
         return Result.success();
     }

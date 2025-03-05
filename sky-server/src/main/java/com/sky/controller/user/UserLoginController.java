@@ -36,7 +36,7 @@ public class UserLoginController {
     @PostMapping("/login")
     @ApiOperation("用户登录")
     public Result<UserLoginVO> UserLogin(@RequestBody UserLoginDTO userLoginDTO) throws IOException, LoginException {
-        log.info("用户微信登录：{}", userLoginDTO.getCode());
+        //log.info("用户微信登录：{}", userLoginDTO.getCode());
 
         User user = userService.wxLogin(userLoginDTO);
 
@@ -48,11 +48,10 @@ public class UserLoginController {
                 jwtProperties.getUserTtl(),
                 claims);
 
-        UserLoginVO userLoginVO = UserLoginVO.builder()
-                .id(user.getId())
-                .openid(user.getOpenid())
-                .token(token)
-                .build();
+        UserLoginVO userLoginVO = new UserLoginVO();
+        userLoginVO.setToken(token);
+        userLoginVO.setId(user.getId());
+        userLoginVO.setOpenid(user.getOpenid());
         return Result.success(userLoginVO);
     }
 

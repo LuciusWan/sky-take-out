@@ -4,6 +4,7 @@ import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
+import com.sky.mapper.EmployeeMapper;
 import com.sky.properties.JwtProperties;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
@@ -31,6 +32,8 @@ public class EmployeeController {
     private EmployeeService employeeService;
     @Autowired
     private JwtProperties jwtProperties;
+    @Autowired
+    private EmployeeMapper employeeMapper;
 
     /**
      * 登录
@@ -41,7 +44,7 @@ public class EmployeeController {
     @ApiOperation("员工登录")
     @PostMapping("/login")
     public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
-        log.info("员工登录：{}", employeeLoginDTO);
+        //log.info("员工登录：{}", employeeLoginDTO);
 
         Employee employee = employeeService.login(employeeLoginDTO);
 
@@ -53,13 +56,11 @@ public class EmployeeController {
                 jwtProperties.getAdminTtl(),
                 claims);
 
-        EmployeeLoginVO employeeLoginVO = EmployeeLoginVO.builder()
-                .id(employee.getId())
-                .userName(employee.getUsername())
-                .name(employee.getName())
-                .token(token)
-                .build();
-
+        EmployeeLoginVO employeeLoginVO =new  EmployeeLoginVO();
+                employeeLoginVO.setToken(token);
+                employeeLoginVO.setId(employee.getId());
+                employeeLoginVO.setName(employee.getName());
+                employeeLoginVO.setUserName(employee.getUsername());
         return Result.success(employeeLoginVO);
     }
 
@@ -76,21 +77,21 @@ public class EmployeeController {
     @ApiOperation("员工添加")
     @PostMapping
     public Result save(@RequestBody EmployeeDTO employeeDTO) {
-        log.info("新增员工{}", employeeDTO);
+        //log.info("新增员工{}", employeeDTO);
         employeeService.Insert(employeeDTO);
         return Result.success();
     }
     @ApiOperation("分页查询员工")
     @GetMapping("/page")
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO) {
-        log.info("分页查询员工,查询员工第{}页，每页有{}人", employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        //log.info("分页查询员工,查询员工第{}页，每页有{}人", employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
         PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
     }
     @ApiOperation("员工状态信息查询")
     @PostMapping("/status/{status}")
     public Result startOrStop(@PathVariable Integer status,Long id) {
-        log.info("启用和禁用员工账号");
+        //log.info("启用和禁用员工账号");
         employeeService.startOrStop(status,id);
         return Result.success();
     }

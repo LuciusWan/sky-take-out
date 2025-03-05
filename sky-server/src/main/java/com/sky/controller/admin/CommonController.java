@@ -27,7 +27,7 @@ public class CommonController {
     @PostMapping("/upload")
     @ApiOperation("文件上传")
     public Result<String> upload(MultipartFile file) {
-        log.info("文件上传{}", file);
+        //log.info("文件上传{}", file);
         try {
             String originalFilename = file.getOriginalFilename();
             String extention = originalFilename.substring(originalFilename.lastIndexOf("."));
@@ -35,7 +35,7 @@ public class CommonController {
             String filePath = aliOssUtil.upload(file.getBytes(), objectName);
             return Result.success(filePath);
         } catch (IOException e) {
-            log.error("文件上传失败{}", e.getMessage());
+            //log.error("文件上传失败{}", e.getMessage());
         }
         return Result.error(MessageConstant.UPLOAD_FAILED);
     }

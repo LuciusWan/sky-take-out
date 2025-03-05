@@ -26,27 +26,27 @@ public class SetmealController {
     private SetmealService setmealService;
     @GetMapping("/page")
     public Result<PageResult> page(SetmealPageQueryDTO setmealPageQueryDTO){
-        log.info("分页查询{}",setmealPageQueryDTO);
+        //log.info("分页查询{}",setmealPageQueryDTO);
         PageResult pageResult=setmealService.pageQuery(setmealPageQueryDTO);
         return Result.success(pageResult);
     }
     @PostMapping
     @CacheEvict(cacheNames = "setmealCache",key = "#setmealDTO.categoryId")
     public Result save(@RequestBody SetmealDTO setmealDTO){
-        log.info("新增套餐{}",setmealDTO);
+        //log.info("新增套餐{}",setmealDTO);
         setmealService.save(setmealDTO);
         return Result.success();
     }
     @DeleteMapping
     @CacheEvict(cacheNames = "setmealCache",allEntries = true)
     public Result delete(@RequestParam List<Long> ids){
-        log.info("批量删除/删除{}",ids);
+        //log.info("批量删除/删除{}",ids);
         setmealService.delete(ids);
         return Result.success();
     }
     @GetMapping("/{id}")
     public Result<SetmealVO> get(@PathVariable Long id){
-        log.info("修改套餐第一步,套餐id为{}",id);
+        //log.info("修改套餐第一步,套餐id为{}",id);
         SetmealVO setmealVO=setmealService.getById(id);
         return Result.success(setmealVO);
     }
@@ -59,7 +59,7 @@ public class SetmealController {
     @PostMapping("status/{status}")
     @CacheEvict(cacheNames = "setmealCache",allEntries = true)
     public Result updateStatus(@PathVariable  Integer status ,Long id){
-        log.info("修改套餐状态");
+        //log.info("修改套餐状态");
         setmealService.changeStatus(status,id);
         return Result.success();
     }

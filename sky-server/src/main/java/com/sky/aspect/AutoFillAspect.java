@@ -29,12 +29,12 @@ public class AutoFillAspect {
     public void autoFillPointCut() {}
     @Before("autoFillPointCut()")
     public void autoFill(JoinPoint joinPoint) throws NoSuchMethodException, IllegalAccessException {
-        log.info("公共字段开始填充");
+        //log.info("公共字段开始填充");
         Class<?> targetClass = joinPoint.getTarget().getClass();
         String methodName = joinPoint.getSignature().getName();
         Class<?>[] parameterTypes = new Class<?>[joinPoint.getArgs().length];
-        log.info("Target Class: {}", targetClass.getName());
-        log.info("Method Name: {}", methodName);
+        //log.info("Target Class: {}", targetClass.getName());
+        //log.info("Method Name: {}", methodName);
         for (int i = 0; i < joinPoint.getArgs().length; i++) {
             parameterTypes[i] = joinPoint.getArgs()[i].getClass();
         }
@@ -50,7 +50,7 @@ public class AutoFillAspect {
             return;
         }
         Object entity=arg[0];
-        log.info("{}",entity);
+        //log.info("{}",entity);
 
         //准备赋值数据
         LocalDateTime now = LocalDateTime.now();

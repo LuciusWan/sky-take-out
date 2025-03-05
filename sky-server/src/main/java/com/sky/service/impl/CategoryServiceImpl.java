@@ -112,12 +112,9 @@ public class CategoryServiceImpl implements CategoryService {
      * @param id
      */
     public void startOrStop(Integer status, Long id) {
-        Category category = Category.builder()
-                .id(id)
-                .status(status)
-                /*.updateTime(LocalDateTime.now())
-                .updateUser(BaseContext.getCurrentId())*/
-                .build();
+        Category category = new  Category();
+        category.setStatus(status);
+        category.setId(id);
         categoryMapper.update(category);
     }
 

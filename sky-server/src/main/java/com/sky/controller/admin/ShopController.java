@@ -19,7 +19,7 @@ public class ShopController {
     @PutMapping("/{status}")
     @ApiOperation("设置店铺营业状态")
     public Result serStatus(@PathVariable Integer status){
-        log.info("设置店铺信息{}",status==1?"营业中":"打样中");
+        //log.info("设置店铺信息{}",status==1?"营业中":"打样中");
         redisTemplate.opsForValue().set(KEY,status);
         return Result.success();
     }
@@ -27,7 +27,7 @@ public class ShopController {
     @ApiOperation("查询店铺营业状态")
     public Result<Integer> getShopStatus(){
         Integer status=(Integer) redisTemplate.opsForValue().get(KEY);
-        log.info("获取店铺营业状态为{}",status==1?"营业中":"打样中");
+        //log.info("获取店铺营业状态为{}",status==1?"营业中":"打样中");
         return Result.success(status);
     }
 }

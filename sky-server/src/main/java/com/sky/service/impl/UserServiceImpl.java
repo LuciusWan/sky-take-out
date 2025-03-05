@@ -43,10 +43,8 @@ public class UserServiceImpl implements UserService {
         }
         User user = userMapper.getByOpenId(openId);
         if (user == null) {
-            user=User.builder()
-                    .openid(openId)
-                    .createTime(LocalDateTime.now())
-                    .build();
+            user.setOpenid(openId);
+            user.setCreateTime(LocalDateTime.now());
             userMapper.Insert(user);
         }
         return user;

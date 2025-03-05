@@ -35,14 +35,14 @@ public class OrderController {
     @GetMapping("/historyOrders")
     @ApiOperation("历史订单查询")
     public Result<PageResult> historyOrders(int page, int pageSize, Integer status) {
-        log.info("用户查询历史订单");
+        //log.info("用户查询历史订单");
         PageResult pageResult=orderService.pageResult(page,pageSize,status);
         return Result.success(pageResult);
     }
     @GetMapping("/orderDetail/{id}")
     @ApiOperation("查询订单详情信息")
     public Result<OrderVO> detail(@PathVariable Long id) {
-        log.info("查询订单详情信息");
+        //log.info("查询订单详情信息");
         OrderVO orderVO =orderService.checkOrder(id);
         return Result.success(orderVO);
     }
@@ -67,7 +67,7 @@ public class OrderController {
     @PutMapping("/payment")
     @ApiOperation("订单支付")
     public Result payment(@RequestBody OrdersPaymentDTO ordersPaymentDTO) throws Exception {
-        log.info("订单支付：{}", ordersPaymentDTO);
+        //log.info("订单支付：{}", ordersPaymentDTO);
         orderService.payment(ordersPaymentDTO);
         return Result.success();
     }
