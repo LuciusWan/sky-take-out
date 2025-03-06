@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = userMapper.getByOpenId(openId);
         if (user == null) {
+            user=new User();
             user.setOpenid(openId);
             user.setCreateTime(LocalDateTime.now());
             userMapper.Insert(user);

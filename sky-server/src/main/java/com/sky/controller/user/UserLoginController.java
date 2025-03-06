@@ -52,6 +52,7 @@ public class UserLoginController {
         userLoginVO.setToken(token);
         userLoginVO.setId(user.getId());
         userLoginVO.setOpenid(user.getOpenid());
+        System.out.println(userLoginVO);
         return Result.success(userLoginVO);
     }
 

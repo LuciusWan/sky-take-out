@@ -1,10 +1,12 @@
 package com.sky.mapper;
 
 import com.github.pagehelper.Page;
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import com.sky.vo.DishVO;
 import com.sky.vo.OrderVO;
+import com.sky.vo.SalesTop10ReportVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -36,4 +38,19 @@ public interface OrderMapper {
     void updateConsignee(String consignee,Long addressBookId,String phone);
     @Select("select sum(amount) from orders where order_time>=#{beginTime} and order_time<=#{endTime} and status=5")
     Double turnover(LocalDateTime beginTime, LocalDateTime endTime);
+    @Select("select count(DISTINCT user_id) from orders where order_time>=#{beginTime} and order_time<=#{endTime}")
+    Integer totalUser(LocalDateTime beginTime, LocalDateTime endTime);
+    @Select("select count(*) from user where create_time>=#{beginTime} and create_time<=#{endTime}")
+    Integer newUser(LocalDateTime beginTime, LocalDateTime endTime);
+    @Select("select count(*) from orders")
+    Integer totalOrderCount();
+    @Select("select count(*) from orders where status=5")
+    Integer validOrderCount();
+    @Select("select count(*) from orders where order_time>=#{beginTime} and order_time<=#{endTime}")
+    Integer totalOrders(LocalDateTime beginTime, LocalDateTime endTime);
+    @Select("select count(*) from orders where order_time>=#{beginTime} and order_time<=#{endTime} and status=5")
+    Integer validOrders(LocalDateTime beginTime, LocalDateTime endTime);
+    @Select("select od.name,sum(od.number) number from order_detail od, orders o where od.order_id=o.id and o.order_time>=#{beginTime} and o.order_time<=#{endTime} and o.status=5 " +
+            "group by od.name order by number desc limit 0,10")
+    List<GoodsSalesDTO> saleTop10(LocalDateTime beginTime, LocalDateTime endTime);
 }
