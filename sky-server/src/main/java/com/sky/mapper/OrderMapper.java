@@ -5,12 +5,14 @@ import com.sky.dto.GoodsSalesDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import com.sky.vo.DishVO;
+import com.sky.vo.OrderOverViewVO;
 import com.sky.vo.OrderVO;
 import com.sky.vo.SalesTop10ReportVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -53,4 +55,14 @@ public interface OrderMapper {
     @Select("select od.name,sum(od.number) number from order_detail od, orders o where od.order_id=o.id and o.order_time>=#{beginTime} and o.order_time<=#{endTime} and o.status=5 " +
             "group by od.name order by number desc limit 0,10")
     List<GoodsSalesDTO> saleTop10(LocalDateTime beginTime, LocalDateTime endTime);
+    @Select("SELECT " +
+            "    (SELECT COUNT(*) FROM orders) AS allOrders," +
+            "    (SELECT COUNT(*) FROM orders WHERE status = 6) AS cancelledOrders," +
+            "    (SELECT COUNT(*) FROM orders WHERE status = 5) AS completedOrders," +
+            "    (SELECT COUNT(*) FROM orders WHERE status = 4 and status=3) AS deliveredOrders," +
+            "    (SELECT COUNT(*) FROM orders WHERE status = 2) AS waitingOrders")
+
+    OrderOverViewVO overviewOrders();
+    @Select("select sum(amount) from orders where status=5 and order_time>=#{beginTime} and order_time<=#{endTime}")
+    Double totalAmount(LocalDateTime beginTime, LocalDateTime endTime);
 }

@@ -23,8 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -368,5 +371,30 @@ public class OrderServiceImpl implements OrderService {
         map.put("content","id为"+id+"的用户催单了");
         String json= JSON.toJSONString(map);
         webSocketServer.sendToAllClient(json);
+    }
+
+    @Override
+    public OrderOverViewVO overviewOrders() {
+        OrderOverViewVO orderOverViewVO = new OrderOverViewVO();
+        orderOverViewVO=orderMapper.overviewOrders();
+        return orderOverViewVO;
+    }
+
+    @Override
+    public BusinessDataVO overviewBusinessData() {
+        LocalDateTime beginTime = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        BusinessDataVO businessDataVO = new BusinessDataVO();
+        businessDataVO.setNewUsers(orderMapper.newUser(beginTime,endTime));
+        businessDataVO.setTurnover(orderMapper.turnover(beginTime,endTime));
+        businessDataVO.setOrderCompletionRate(orderMapper.validOrders(beginTime,endTime)/(double)orderMapper.totalOrders(beginTime,endTime));
+        Double totalAmount = orderMapper.totalAmount(beginTime, endTime);
+        double value = totalAmount/orderMapper.totalOrders(beginTime,endTime);
+        BigDecimal bd = new BigDecimal(Double.toString(value));
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        double roundedValue = bd.doubleValue();
+        businessDataVO.setUnitPrice(roundedValue);
+        businessDataVO.setValidOrderCount(orderMapper.validOrders(beginTime,endTime));
+        return businessDataVO;
     }
 }

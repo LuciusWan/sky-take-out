@@ -15,6 +15,7 @@ import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
+import com.sky.vo.DishOverViewVO;
 import com.sky.vo.DishVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +121,14 @@ public class DishServiceImpl implements DishService {
     @Override
     public void changeStatus(Integer status, Long id) {
         dishMapper.changeStatus(status,id);
+    }
+
+    @Override
+    public DishOverViewVO overviewDishes() {
+        DishOverViewVO dishOverViewVO=new DishOverViewVO();
+        dishOverViewVO.setSold(dishMapper.onSale());
+        dishOverViewVO.setDiscontinued(dishMapper.unSale());
+        return dishOverViewVO;
     }
 
     /**

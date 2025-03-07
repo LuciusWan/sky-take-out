@@ -6,6 +6,7 @@ import com.sky.entity.Category;
 import com.sky.entity.Dish;
 import com.sky.mapper.DishFlavorsMapper;
 import com.sky.result.PageResult;
+import com.sky.vo.DishOverViewVO;
 import com.sky.vo.DishVO;
 
 import java.util.List;
@@ -29,4 +30,6 @@ public interface DishService {
     List<Dish> selectByCategoryId(Long categoryId);
 
     void changeStatus(Integer status, Long id);
+
+    DishOverViewVO overviewDishes();
 }

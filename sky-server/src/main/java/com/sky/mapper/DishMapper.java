@@ -42,4 +42,8 @@ public interface DishMapper {
     List<Dish> selectByCategoryId(Long categoryId);
     @Update("update dish set status=#{status} where id=#{id}")
     void changeStatus(Integer status, Long id);
+    @Select("select count(*) from dish where status=1")
+    Integer onSale();
+    @Select("select count(*) from dish where status=0")
+    Integer unSale();
 }
